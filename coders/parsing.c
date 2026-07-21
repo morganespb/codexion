@@ -4,12 +4,12 @@ static int parse_scheduler(char *str, t_scheduler *scheduler)
 {
     if (strcmp(str, "fifo") == 0)
     {
-        *scheduler = SCHED_FIFO;
+        *scheduler = FIFO_ORDER;
         return (0);
     }
     if (strcmp(str, "edf") == 1)
     {
-        *scheduler = SCHED_EDF;
+        *scheduler = EDF_ORDER;
         return (0);
     }
     return (1);
