@@ -20,10 +20,15 @@ static void	*coder_routine(void *arg)
 	//long    now;
 	//long    elapsed;
 	coder = (t_coder *) arg;
-	log_coder(coder, "is running");
-	precise_sleep(coder->sim, 200);
-    if (!simulation_stopped(coder->sim))
-        usleep(100);
+    while (!simulation_stopped(coder->sim))
+    {
+        if (compile(coder) != 0)
+            break ;
+        if (debug(coder) != 0)
+            break ;
+        if (refactor(coder) != 0)
+            break ;
+    }
     return (NULL);
 }
 

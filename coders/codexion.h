@@ -43,12 +43,13 @@ typedef struct s_config
 
 typedef struct s_coder
 {
-	int			id;
-	int			left_dongle;
-	int			right_dongle;
-	int			compile_count;
-    long        last_compile_start;
-	pthread_t	thread;
+	int			        id;
+	int			        left_dongle;
+	int			        right_dongle;
+	int                 compile_count;
+    long                last_compile_start;
+	pthread_t	        thread;
+    pthread_mutex_t     data_mutex;
 	t_sim		*sim;
 }	t_coder;
 
@@ -80,5 +81,13 @@ int     simulation_stopped(t_sim *sim);
 void    stop_simulation(t_sim *sim);
 void    *monitor_routine(void *arg);
 void    init_coder_times(t_sim *sim);
+long    get_last_compile_start(t_coder *coder);
+void    set_last_compile_start(t_coder *coder, long value);
+void    increment_compile_count(t_coder *coder);
+int     get_compile_count(t_coder *coder);
+int     compile(t_coder *coder);
+int     debug(t_coder *coder);
+int     refactor(t_coder *coder);
+
 
 #endif

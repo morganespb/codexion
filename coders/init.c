@@ -24,7 +24,19 @@ static void	init_dongles(t_sim *sim)
 	}
 }
 
-static void	init_coders(t_sim *sim)
+static void destroy_mutexes(t_sim *sim,int count)
+{
+    int i;
+    
+    i = 0;
+    while (i < count)
+    {
+        pthread_mutex_destroy(&sim->coders[i].data_mutex);
+        i++;
+    }
+}
+
+static int	init_coders(t_sim *sim)
 {
 	int	i;
 	int	count;
@@ -38,8 +50,14 @@ static void	init_coders(t_sim *sim)
 		sim->coders[i].right_dongle = (i + 1) % count;
 		sim->coders[i].compile_count = 0;
 		sim->coders[i].sim = sim;
-		i++;
+        if (pthread_mutex_init(&sim->coders[i].data_mutex, NULL) != 0)
+        {
+            destroy_mutexes(sim, i);
+            return (1);
+        }
+        i++;
 	}
+    return (0);
 }
 
 void    init_coder_times(t_sim *sim)
@@ -78,6 +96,13 @@ int	init_simulation(t_sim *sim, t_config config)
 		return (1);
 	}
 	init_dongles(sim);
-	init_coders(sim);
+	if (init_coders(sim) != 0)
+    {
+        pthread_mutex_destroy(&sim->state_mutex);
+        pthread_mutex_destroy(&sim->print_mutex);
+        free(sim->dongles);
+        free(sim->coders);
+        return (1);
+    }
 	return (0);
 }

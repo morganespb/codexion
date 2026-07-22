@@ -9,7 +9,9 @@ SRC = main.c \
 	  time.c \
 	  logs.c \
 	  state.c \
-	  monitor.c
+	  monitor.c \
+	  coder_actions.c \
+	  coder_data.c
 
 OBJ = $(SRC:.c=.o)
 

@@ -2,12 +2,14 @@
 
 static int  coder_burned_out(t_coder *coder)
 {
-    long now;
+    long    now;
+    long    last_compile;
 
     now = get_time_ms();
     if (now == -1)
         return (1);
-    if  (now - coder->last_compile_start >= coder->sim->config.time_to_burnout)
+    last_compile = get_last_compile_start(coder);
+    if (now - last_compile >= coder->sim->config.time_to_burnout)
         return (1);
     return (0);
 }
