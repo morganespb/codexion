@@ -12,28 +12,24 @@
 
 #include "codexion.h"
 
-static void	init_dongles(t_sim *sim)
+static int  init_dongles(t_sim *sim)
 {
 	int	i;
 
 	i = 0;
+    sim->dongles_initialized = 0;
 	while (i < sim->config.number_of_coders)
 	{
 		sim->dongles[i].id = i;
+        if (pthread_mutex_init(&sim->dongles[i].dongles_mutex, NULL) != 0)
+        {
+            destroy_dongles_mutexes(sim, i);
+            return (1);
+        }
 		i++;
+        sim->dongles_initialized++;
 	}
-}
-
-static void destroy_mutexes(t_sim *sim,int count)
-{
-    int i;
-    
-    i = 0;
-    while (i < count)
-    {
-        pthread_mutex_destroy(&sim->coders[i].data_mutex);
-        i++;
-    }
+    return (0);
 }
 
 static int	init_coders(t_sim *sim)
@@ -43,7 +39,8 @@ static int	init_coders(t_sim *sim)
 
 	i = 0;
 	count = sim->config.number_of_coders;
-	while (i < count)
+    sim->coders_initialized = 0;
+	while (i < sim->config.number_of_coders)
 	{
 		sim->coders[i].id = i + 1;
 		sim->coders[i].left_dongle = i;
@@ -52,9 +49,10 @@ static int	init_coders(t_sim *sim)
 		sim->coders[i].sim = sim;
         if (pthread_mutex_init(&sim->coders[i].data_mutex, NULL) != 0)
         {
-            destroy_mutexes(sim, i);
+            destroy_coders_mutexes(sim, i);
             return (1);
         }
+        sim->coders_initialized++;
         i++;
 	}
     return (0);
@@ -95,13 +93,9 @@ int	init_simulation(t_sim *sim, t_config config)
 		free(sim->dongles);
 		return (1);
 	}
-	init_dongles(sim);
-	if (init_coders(sim) != 0)
+	if (init_coders(sim) != 0 || init_dongles(sim) != 0)
     {
-        pthread_mutex_destroy(&sim->state_mutex);
-        pthread_mutex_destroy(&sim->print_mutex);
-        free(sim->dongles);
-        free(sim->coders);
+        cleanup_sim(sim, sim->coders_initialized, sim->dongles_initialized); 
         return (1);
     }
 	return (0);

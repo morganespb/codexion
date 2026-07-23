@@ -28,22 +28,6 @@
 //    }
 //}
 
-void    cleanup_sim(t_sim *sim)
-{
-    int i;
-
-    i = 0;
-    while (i < sim->config.number_of_coders)
-    {
-        pthread_mutex_destroy(&sim->coders[i].data_mutex);
-        i++;
-    }
-    pthread_mutex_destroy(&sim->print_mutex);
-    pthread_mutex_destroy(&sim->state_mutex);
-    free(sim->dongles);
-    free(sim->coders);
-}
-
 int	main(int ac, char **av)
 {
 	t_config	config;
@@ -74,6 +58,6 @@ int	main(int ac, char **av)
 		return (1);
 	}
 	//print_sim(&sim);
-    cleanup_sim(&sim);
+    cleanup_sim(&sim, sim.coders_initialized, sim.dongles_initialized);
 	return (0);
 }

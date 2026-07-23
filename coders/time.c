@@ -27,6 +27,3 @@ void    precise_sleep(t_sim *sim, long duration_ms)
         usleep(100);
     }
 }
-
-
-

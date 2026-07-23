@@ -49,5 +49,3 @@ int	coders_done(t_sim *sim)
 	}
 	return (1);
 }
-
-

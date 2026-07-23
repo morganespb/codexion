@@ -12,6 +12,8 @@ SRC = main.c \
 	  monitor.c \
 	  coder_actions.c \
 	  coder_data.c \
+	  cleanup.c \
+	  dongles.c
 
 OBJ = $(SRC:.c=.o)
 

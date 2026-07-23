@@ -50,12 +50,13 @@ typedef struct s_coder
     long                last_compile_start;
 	pthread_t	        thread;
     pthread_mutex_t     data_mutex;
-	t_sim		*sim;
+	t_sim		        *sim;
 }	t_coder;
 
 typedef struct s_dongle
 {
-	int	id;
+	int                 id;
+    pthread_mutex_t     dongles_mutex;
 }	t_dongle;
 
 typedef struct s_sim
@@ -65,6 +66,8 @@ typedef struct s_sim
 	t_dongle		*dongles;
 	long			start_time;
     int             stopped;
+    int             coders_initialized;
+    int             dongles_initialized;
     pthread_t       monitor;
 	pthread_mutex_t	print_mutex;
     pthread_mutex_t state_mutex;
@@ -88,6 +91,11 @@ int     get_compile_count(t_coder *coder);
 int     compile(t_coder *coder);
 int     debug(t_coder *coder);
 int     refactor(t_coder *coder);
-int	coders_done(t_sim *sim);
+int     coders_done(t_sim *sim);
+void    cleanup_sim(t_sim *sim, int coders, int dongles);
+void    destroy_dongles_mutexes(t_sim *sim, int count);
+void    destroy_coders_mutexes(t_sim *sim, int count);
+void    take_dongles(t_coder *coder);
+void    release_dongles(t_coder *coder);
 
 #endif
