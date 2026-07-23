@@ -36,3 +36,18 @@ int     get_compile_count(t_coder *coder)
     return (count);
 }
 
+int	coders_done(t_sim *sim)
+{
+	int i;
+
+	i = 0;
+	while (i < sim->config.number_of_coders)
+	{
+		if (get_compile_count(&sim->coders[i]) < sim->config.number_of_compiles_required)
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+

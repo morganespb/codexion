@@ -88,6 +88,6 @@ int     get_compile_count(t_coder *coder);
 int     compile(t_coder *coder);
 int     debug(t_coder *coder);
 int     refactor(t_coder *coder);
-
+int	coders_done(t_sim *sim);
 
 #endif

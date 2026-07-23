@@ -11,7 +11,7 @@ SRC = main.c \
 	  state.c \
 	  monitor.c \
 	  coder_actions.c \
-	  coder_data.c
+	  coder_data.c \
 
 OBJ = $(SRC:.c=.o)
 

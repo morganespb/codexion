@@ -31,6 +31,11 @@ void    *monitor_routine(void *arg)
                 stop_simulation(sim);
                 return (NULL);
             }
+	    if (coders_done(sim))
+	    {
+		    stop_simulation(sim);
+		    return (NULL);
+	    }
             i++;
         }
         usleep(500);
