@@ -12,24 +12,48 @@
 
 #include "codexion.h"
 
-int	compile(t_coder *coder)
+static int	abort_compile(t_coder *coder)
+{
+	release_dongles(coder);
+	notify_scheduler(coder->sim);
+	return (1);
+}
+
+static int	begin_compile(t_coder *coder)
 {
 	long	now;
 
+	if (request_permission(coder) != 0)
+		return (1);
+	if (take_dongles(coder) != 0)
+	{
+		notify_scheduler(coder->sim);
+		return (1);
+	}
+	if (simulation_stopped(coder->sim))
+		return (abort_compile(coder));
 	now = get_time_ms();
-	take_dongles(coder);
 	if (now == -1)
 	{
-		release_dongles(coder);
-		return (1);
+		stop_simulation(coder->sim);
+		return (abort_compile(coder));
 	}
 	set_last_compile_start(coder, now);
 	log_coder(coder, "is compiling");
+	notify_scheduler(coder->sim);
+	return (0);
+}
+
+int	compile(t_coder *coder)
+{
+	if (begin_compile(coder) != 0)
+		return (1);
 	precise_sleep(coder->sim, coder->sim->config.time_to_compile);
 	if (!simulation_stopped(coder->sim))
 	{
 		increment_compile_count(coder);
-		precise_sleep(coder->sim, coder->sim->config.dongle_cooldown);
+		if (coders_done(coder->sim))
+			stop_simulation(coder->sim);
 	}
 	release_dongles(coder);
 	if (simulation_stopped(coder->sim))

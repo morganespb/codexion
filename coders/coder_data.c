@@ -32,7 +32,9 @@ void	set_last_compile_start(t_coder *coder, long value)
 void	increment_compile_count(t_coder *coder)
 {
 	pthread_mutex_lock(&coder->data_mutex);
-	coder->compile_count++;
+	if (coder->compile_count
+		< coder->sim->config.number_of_compiles_required)
+		coder->compile_count++;
 	pthread_mutex_unlock(&coder->data_mutex);
 }
 

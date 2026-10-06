@@ -1,4 +1,4 @@
-NAME = Codexion
+NAME = codexion
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -pthread
 
@@ -45,7 +45,7 @@ fclean: clean
 	@rm -f $(NAME)
 	@printf "$(RED)🗸 $(NAME) removed$(RESET)\n"
 
-re: fclean all
+re:
 	@printf "$(CYAN)Rebuilding $(NAME)...$(RESET)\n"
 	@$(MAKE) fclean
 	@$(MAKE) all

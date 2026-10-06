@@ -59,6 +59,7 @@ typedef struct s_coder
 typedef struct s_dongle
 {
 	int				id;
+	long			last_release;
 	pthread_mutex_t	dongles_mutex;
 }	t_dongle;
 
@@ -68,6 +69,7 @@ typedef struct s_scheduler
 	int				size;
 	int				capacity;
 	long			next_order;
+	int				acquisition_in_flight;
 	pthread_cond_t	condition;
 	pthread_mutex_t	sched_mutex;
 }	t_scheduler;
@@ -80,54 +82,59 @@ typedef struct s_sim
 	t_scheduler		scheduler;
 	long			start_time;
 	int				stopped;
+	int				started;
 	int				coders_initialized;
 	int				dongles_initialized;
+	int				scheduler_initialized;
 	pthread_t		monitor;
 	pthread_mutex_t	print_mutex;
 	pthread_mutex_t	state_mutex;
 }	t_sim;
 
-//Parsing
+/* Parsing */
 int		parsing(int ac, char **av, t_config *config);
 
-//Init
+/* Initialization */
 int		init_simulation(t_sim *sim, t_config config);
-void	init_coder_times(t_sim *sim);
 
-//Threads
+/* Threads */
 int		start_threads(t_sim *sim);
 int		join_threads(t_sim *sim);
 
-//Data
+/* Shared data */
 long	get_time_ms(void);
 void	precise_sleep(t_sim *sim, long duration_ms);
-void	log_coder(t_coder *coder, char *message);
+void	log_coder(t_coder *coder, const char *message);
+void	log_burnout(t_coder *coder);
 int		simulation_stopped(t_sim *sim);
-void	stop_simulation(t_sim *sim);
+int		stop_simulation(t_sim *sim);
+int		wait_for_start(t_sim *sim);
+int		begin_simulation(t_sim *sim);
 void	*monitor_routine(void *arg);
 long	get_last_compile_start(t_coder *coder);
 void	set_last_compile_start(t_coder *coder, long value);
 void	increment_compile_count(t_coder *coder);
 int		get_compile_count(t_coder *coder);
 
-//Actions
+/* Actions */
 int		compile(t_coder *coder);
 int		debug(t_coder *coder);
 int		refactor(t_coder *coder);
 int		coders_done(t_sim *sim);
 
-//Cleanup
-void	cleanup_sim(t_sim *sim, int coders, int dongles);
+/* Cleanup */
+void	cleanup_sim(t_sim *sim);
 void	destroy_dongles_mutexes(t_sim *sim, int count);
 void	destroy_coders_mutexes(t_sim *sim, int count);
 void	destroy_scheduler(t_sim *sim);
-void	take_dongles(t_coder *coder);
+int		take_dongles(t_coder *coder);
 void	release_dongles(t_coder *coder);
 
-//Scheduler
+/* Scheduler */
 int		higher_priority(t_sim *sim, t_coder *first, t_coder *second);
 void	heap_insert(t_sim *sim, t_coder *coder);
 t_coder	*heap_pop(t_sim *sim);
+int		request_permission(t_coder *coder);
 void	notify_scheduler(t_sim *sim);
 
 #endif

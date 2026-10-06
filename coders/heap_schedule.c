@@ -21,8 +21,6 @@ static void	swap_coders(t_coder **first, t_coder **second)
 	*second = tmp;
 }
 
-//new coder starts at bottom, move up ?
-
 void	heap_insert(t_sim *sim, t_coder *coder)
 {
 	t_scheduler	*scheduler;
@@ -44,8 +42,6 @@ void	heap_insert(t_sim *sim, t_coder *coder)
 	}
 }
 
-//last coder gets moved to the top, move down ?
-
 static void	heap_clean(t_sim *sim, int index)
 {
 	t_scheduler	*scheduler;
@@ -61,7 +57,10 @@ static void	heap_clean(t_sim *sim, int index)
 		best = index;
 		if (left < scheduler->size && higher_priority(sim,
 					scheduler->heap[left], scheduler->heap[best]))
-		best = right;
+			best = left;
+		if (right < scheduler->size && higher_priority(sim,
+					scheduler->heap[right], scheduler->heap[best]))
+			best = right;
 		if (best == index)
 			break ;
 		swap_coders(&scheduler->heap[index], &scheduler->heap[best]);

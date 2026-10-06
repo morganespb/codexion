@@ -49,35 +49,50 @@ static int	parse_int(char *str, long *result)
 	return (0);
 }
 
-int	parsing(int ac, char **av, t_config *config)
+static int	parse_config_int(char *str, int *result, int minimum)
 {
 	long	value;
 
-	if (ac != 9)
-	{
-		fprintf(stderr, "Error: expected 8 arguments\n");
+	if (parse_int(str, &value) != 0)
 		return (1);
-	}
-	if (parse_int(av[1], &value) != 0)
+	if (value < minimum || value > INT_MAX)
 		return (1);
-	config->number_of_coders = (int) value;
-	if (parse_int(av[2], &value) != 0)
+	*result = (int)value;
+	return (0);
+}
+
+static int	parse_values(char **av, t_config *config)
+{
+	if (parse_config_int(av[1], &config->number_of_coders, 1) != 0)
 		return (1);
-	config->time_to_burnout = (int) value;
+	if (parse_config_int(av[2], &config->time_to_burnout, 0) != 0)
+		return (1);
 	if (parse_int(av[3], &config->time_to_compile) != 0)
 		return (1);
 	if (parse_int(av[4], &config->time_to_debug) != 0)
 		return (1);
 	if (parse_int(av[5], &config->time_to_refactor) != 0)
 		return (1);
-	if (parse_int(av[6], &value) != 0)
+	if (parse_config_int(av[6],
+			&config->number_of_compiles_required, 1) != 0)
 		return (1);
-	config->number_of_compiles_required = (int) value;
 	if (parse_int(av[7], &config->dongle_cooldown) != 0)
+		return (1);
+	return (0);
+}
+
+int	parsing(int ac, char **av, t_config *config)
+{
+	if (ac != 9)
+	{
+		fprintf(stderr, "Error: expected 8 arguments\n");
+		return (1);
+	}
+	if (parse_values(av, config) != 0)
 		return (1);
 	if (parse_scheduler(av[8], &config->scheduler_type) != 0)
 	{
-		fprintf(stderr, "Error: Scheduler must be FIFO or EDF");
+		fprintf(stderr, "Error: scheduler must be fifo or edf\n");
 		return (1);
 	}
 	return (0);

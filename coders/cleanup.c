@@ -41,14 +41,20 @@ void	destroy_scheduler(t_sim *sim)
 	pthread_cond_destroy(&sim->scheduler.condition);
 	pthread_mutex_destroy(&sim->scheduler.sched_mutex);
 	free(sim->scheduler.heap);
+	sim->scheduler.heap = NULL;
+	sim->scheduler_initialized = 0;
 }
 
-void	cleanup_sim(t_sim *sim, int coders, int dongles)
+void	cleanup_sim(t_sim *sim)
 {
-	destroy_coders_mutexes(sim, coders);
-	destroy_dongles_mutexes(sim, dongles);
+	if (sim->scheduler_initialized)
+		destroy_scheduler(sim);
+	destroy_coders_mutexes(sim, sim->coders_initialized);
+	destroy_dongles_mutexes(sim, sim->dongles_initialized);
 	pthread_mutex_destroy(&sim->print_mutex);
 	pthread_mutex_destroy(&sim->state_mutex);
 	free(sim->dongles);
 	free(sim->coders);
+	sim->dongles = NULL;
+	sim->coders = NULL;
 }
