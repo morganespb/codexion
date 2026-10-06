@@ -6,7 +6,7 @@
 /*   By: mosimon <morgane.simon@learner.42.tech>   #+#  +:+       +#+         */
 /*                                               +#+#+#+#+#+   +#+            */
 /*   Created: 2026/07/20 16:01:08 by mosimon          #+#    #+#              */
-/*   Updated: 2026/08/24 13:51:47 by mosimon         ###   ########.fr        */
+/*   Updated: 2026/10/06 14:26:41 by mosimon         ###   ########.fr        */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,45 +88,46 @@ typedef struct s_sim
 }	t_sim;
 
 //Parsing
-int			parsing(int ac, char **av, t_config *config);
+int		parsing(int ac, char **av, t_config *config);
 
 //Init
-int			init_simulation(t_sim *sim, t_config config);
-void		init_coder_times(t_sim *sim);
+int		init_simulation(t_sim *sim, t_config config);
+void	init_coder_times(t_sim *sim);
 
 //Threads
-int			start_threads(t_sim *sim);
-int			join_threads(t_sim *sim);
+int		start_threads(t_sim *sim);
+int		join_threads(t_sim *sim);
 
 //Data
-long		get_time_ms(void);
-void		precise_sleep(t_sim *sim, long duration_ms);
-void		log_coder(t_coder *coder, char *message);
-int			simulation_stopped(t_sim *sim);
-void		stop_simulation(t_sim *sim);
-void		*monitor_routine(void *arg);
-long		get_last_compile_start(t_coder *coder);
-void		set_last_compile_start(t_coder *coder, long value);
-void		increment_compile_count(t_coder *coder);
-int			get_compile_count(t_coder *coder);
+long	get_time_ms(void);
+void	precise_sleep(t_sim *sim, long duration_ms);
+void	log_coder(t_coder *coder, char *message);
+int		simulation_stopped(t_sim *sim);
+void	stop_simulation(t_sim *sim);
+void	*monitor_routine(void *arg);
+long	get_last_compile_start(t_coder *coder);
+void	set_last_compile_start(t_coder *coder, long value);
+void	increment_compile_count(t_coder *coder);
+int		get_compile_count(t_coder *coder);
 
 //Actions
-int			compile(t_coder *coder);
-int			debug(t_coder *coder);
-int			refactor(t_coder *coder);
-int			coders_done(t_sim *sim);
+int		compile(t_coder *coder);
+int		debug(t_coder *coder);
+int		refactor(t_coder *coder);
+int		coders_done(t_sim *sim);
 
 //Cleanup
-void		cleanup_sim(t_sim *sim, int coders, int dongles);
-void		destroy_dongles_mutexes(t_sim *sim, int count);
-void		destroy_coders_mutexes(t_sim *sim, int count);
-void		destroy_scheduler(t_sim *sim);
-void		take_dongles(t_coder *coder);
-void		release_dongles(t_coder *coder);
+void	cleanup_sim(t_sim *sim, int coders, int dongles);
+void	destroy_dongles_mutexes(t_sim *sim, int count);
+void	destroy_coders_mutexes(t_sim *sim, int count);
+void	destroy_scheduler(t_sim *sim);
+void	take_dongles(t_coder *coder);
+void	release_dongles(t_coder *coder);
 
 //Scheduler
-int			higher_priority(t_sim *sim, t_coder *first, t_coder *second);
-void		heap_insert(t_sim *sim, t_coder *coder);
-t_coder		*heap_pop(t_sim *sim);
+int		higher_priority(t_sim *sim, t_coder *first, t_coder *second);
+void	heap_insert(t_sim *sim, t_coder *coder);
+t_coder	*heap_pop(t_sim *sim);
+void	notify_scheduler(t_sim *sim);
 
 #endif

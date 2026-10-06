@@ -79,7 +79,7 @@ t_coder	*heap_pop(t_sim *sim)
 		return (NULL);
 	top = scheduler->heap[0];
 	scheduler->size--;
-	if (scheduler->sixe > 0)
+	if (scheduler->size > 0)
 	{
 		scheduler->heap[0] = scheduler->heap[scheduler->size];
 		heap_clean(sim, 0);

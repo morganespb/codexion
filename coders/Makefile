@@ -13,7 +13,9 @@ SRC = main.c \
 	  coder_actions.c \
 	  coder_data.c \
 	  cleanup.c \
-	  dongles.c
+	  dongles.c \
+	  scheduler.c \
+	  heap_schedule.c
 
 OBJ = $(SRC:.c=.o)
 
