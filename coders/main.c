@@ -6,27 +6,11 @@
 /*   By: mosimon <morgane.simon@learner.42.tech>   #+#  +:+       +#+         */
 /*                                               +#+#+#+#+#+   +#+            */
 /*   Created: 2026/07/20 16:00:11 by mosimon          #+#    #+#              */
-/*   Updated: 2026/07/20 16:00:11 by mosimon         ###   ########.fr        */
+/*   Updated: 2026/08/24 13:52:04 by mosimon         ###   ########.fr        */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
-
-//static void print_sim(t_sim *sim)
-//{
-//    int i;
-//
-//    i = 0;
-//    while (i < sim->config.number_of_coders)
-//    {
-//        printf("Coder %d: left=%d, right=%d, compiles=%d\n",
-//            sim->coders[i].id,
-//            sim->coders[i].left_dongle,
-//            sim->coders[i].right_dongle,
-//            sim->coders[i].compile_count);
-//        i++;
-//    }
-//}
 
 int	main(int ac, char **av)
 {
@@ -44,20 +28,13 @@ int	main(int ac, char **av)
 		free(sim.dongles);
 		return (1);
 	}
-    init_coder_times(&sim);
-	if (start_threads(&sim) != 0)
+	init_coder_times(&sim);
+	if (start_threads(&sim) != 0 || join_threads(&sim) != 0)
 	{
 		free(sim.coders);
 		free(sim.dongles);
 		return (1);
 	}
-	if (join_threads(&sim) != 0)
-	{
-		free(sim.coders);
-		free(sim.dongles);
-		return (1);
-	}
-	//print_sim(&sim);
-    cleanup_sim(&sim, sim.coders_initialized, sim.dongles_initialized);
+	cleanup_sim(&sim, sim.coders_initialized, sim.dongles_initialized);
 	return (0);
 }
