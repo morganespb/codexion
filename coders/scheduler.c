@@ -31,13 +31,13 @@ static void	grant_access(t_sim *sim)
 	t_coder	*next;
 
 	if (sim->scheduler.size == 0
-		|| sim->scheduler.acquisition_in_flight)
+		|| sim->scheduler.currently_taking_dongles)
 		return ;
 	next = heap_pop(sim);
 	if (next == NULL)
 		return ;
 	next->permission_granted = 1;
-	sim->scheduler.acquisition_in_flight = 1;
+	sim->scheduler.currently_taking_dongles = 1;
 	pthread_cond_broadcast(&sim->scheduler.condition);
 }
 
@@ -47,7 +47,7 @@ static int	finish_request(t_coder *coder, t_scheduler *scheduler)
 	if (simulation_stopped(coder->sim))
 	{
 		if (coder->permission_granted)
-			scheduler->acquisition_in_flight = 0;
+			scheduler->currently_taking_dongles = 0;
 		pthread_mutex_unlock(&scheduler->sched_mutex);
 		return (1);
 	}
@@ -79,7 +79,7 @@ int	request_permission(t_coder *coder)
 void	notify_scheduler(t_sim *sim)
 {
 	pthread_mutex_lock(&sim->scheduler.sched_mutex);
-	sim->scheduler.acquisition_in_flight = 0;
+	sim->scheduler.currently_taking_dongles = 0;
 	if (!simulation_stopped(sim))
 		grant_access(sim);
 	pthread_cond_broadcast(&sim->scheduler.condition);

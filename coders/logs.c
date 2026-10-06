@@ -12,7 +12,7 @@
 
 #include "codexion.h"
 
-void	log_coder(t_coder *coder, const char *message)
+void	log_coder(t_coder *coder, char *message)
 {
 	long	timestamp;
 

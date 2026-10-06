@@ -69,7 +69,7 @@ typedef struct s_scheduler
 	int				size;
 	int				capacity;
 	long			next_order;
-	int				acquisition_in_flight;
+	int				currently_taking_dongles;
 	pthread_cond_t	condition;
 	pthread_mutex_t	sched_mutex;
 }	t_scheduler;
@@ -91,20 +91,20 @@ typedef struct s_sim
 	pthread_mutex_t	state_mutex;
 }	t_sim;
 
-/* Parsing */
+/* parsing */
 int		parsing(int ac, char **av, t_config *config);
 
-/* Initialization */
+/* initialization */
 int		init_simulation(t_sim *sim, t_config config);
 
-/* Threads */
+/* threads */
 int		start_threads(t_sim *sim);
 int		join_threads(t_sim *sim);
 
-/* Shared data */
+/* shared data */
 long	get_time_ms(void);
 void	precise_sleep(t_sim *sim, long duration_ms);
-void	log_coder(t_coder *coder, const char *message);
+void	log_coder(t_coder *coder, char *message);
 void	log_burnout(t_coder *coder);
 int		simulation_stopped(t_sim *sim);
 int		stop_simulation(t_sim *sim);
@@ -116,13 +116,13 @@ void	set_last_compile_start(t_coder *coder, long value);
 void	increment_compile_count(t_coder *coder);
 int		get_compile_count(t_coder *coder);
 
-/* Actions */
+/* actions */
 int		compile(t_coder *coder);
 int		debug(t_coder *coder);
 int		refactor(t_coder *coder);
 int		coders_done(t_sim *sim);
 
-/* Cleanup */
+/* cleanup */
 void	cleanup_sim(t_sim *sim);
 void	destroy_dongles_mutexes(t_sim *sim, int count);
 void	destroy_coders_mutexes(t_sim *sim, int count);
@@ -130,7 +130,7 @@ void	destroy_scheduler(t_sim *sim);
 int		take_dongles(t_coder *coder);
 void	release_dongles(t_coder *coder);
 
-/* Scheduler */
+/* scheduler */
 int		higher_priority(t_sim *sim, t_coder *first, t_coder *second);
 void	heap_insert(t_sim *sim, t_coder *coder);
 t_coder	*heap_pop(t_sim *sim);

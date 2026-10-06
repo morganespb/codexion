@@ -63,7 +63,7 @@ static int	init_sched(t_sim *sim)
 	scheduler->capacity = sim->config.number_of_coders;
 	scheduler->size = 0;
 	scheduler->next_order = 0;
-	scheduler->acquisition_in_flight = 0;
+	scheduler->currently_taking_dongles = 0;
 	scheduler->heap = malloc(sizeof(*scheduler->heap)
 			* (size_t)scheduler->capacity);
 	if (scheduler->heap == NULL)
